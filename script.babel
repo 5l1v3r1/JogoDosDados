@@ -1,0 +1,128 @@
+
+
+class App extends React.Component {
+	
+	constructor(props) {
+		super(props);
+		this.state = {
+			dado1: null,
+			dado2: null,
+			resultado: null,
+			palpite: null,
+			historico: [],
+			acc: 0,
+			err: 0
+		}
+	}
+	getRandomInt = (min, max) => {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min)) + min;
+	}
+
+
+	handleDados = () => {
+		let dado1 = this.getRandomInt(1, 6)
+		let dado2 = this.getRandomInt(1, 6)
+		let resultado = dado1 + dado2
+		let historico = this.state.historico
+		this.setState({
+			dado1,
+			dado2,
+			resultado: resultado
+		})
+		if (resultado == this.state.palpite) {
+			let acc = this.state.acc + 1;
+			alert('acertou')
+			let acertos = {
+				dado1: dado1,
+				dado2: dado2,
+				palpite: this.state.palpite,
+				resultado: resultado,
+				acertou: acc,
+				errou: this.state.err
+			}
+			historico.push(acertos)
+			this.setState({
+				historico: historico,
+				acc,
+				
+			}, console.log(this.state.historico))
+
+		} else {
+			alert('errou')
+			let err = this.state.err + 1;
+			let erros = {
+				dado1: dado1,
+				dado2: dado2,
+				palpite: this.state.palpite,
+				resultado: resultado,
+				errou: err,
+				acertou: this.state.acc
+			}
+			historico.push(erros)
+			this.setState({
+				historico: historico,
+				err
+			}, console.log(this.state.historico))
+		}
+	}
+	handleInput = (event) => {
+		this.setState({
+			palpite: event.target.value
+		})
+	}
+
+	render() {
+		let links = ["https://vector.me/files/images/3/2/323097/dado_1_preview","https://images.vectorhq.com/images/previews/482/dado-2-138325.png","https://images.vectorhq.com/images/previews/194/dado-3-138321.png", "https://vector.me/files/images/3/2/323088/dado_4_preview", "https://vector.me/files/images/3/2/323085/dado_5_preview", "https://lh3.googleusercontent.com/proxy/a-dw-A3e-z3gNxo9kQ8S_p1LcBMVaz5hC5jGiDbIEOpX1hEnT7E3abKmNDqM-z4EndihIZ__TB1PixghjgWTI80U6LbOtuA"];
+		return (
+			<>
+				<div style={{display: 'flex',flexDirection:'row', flexWrap:'wrap'}}>
+					<div className="dado" style={{backgroundImage: `url(${links[this.state.dado1 - 1]})`}}></div>
+					<div className="dado" style={{backgroundImage: `url(${links[this.state.dado2 - 1]})`}}></div>
+					<button className="btnResultado">{this.state.resultado} </button>
+				</div>
+				<div>
+					<span className="lblPalpite">PALPITE</span> <input className="txtPalpite" type="Number" maxLength="2" onChange={this.handleInput} />
+					<br />
+					<button className="btnLancar" style={{ margin: '10px 0' }} onClick={() => this.handleDados()}>LANCAR DADOS</button>
+				</div>
+				<div>
+					<table>
+						<tr>
+							<td colspan="6"><h1>Histórico</h1></td>
+						</tr>
+						<tr>
+							<th>Dado 1</th>
+							<th>Dado 2</th>
+							<th>Palpite</th>
+							<th>Resultado</th>
+							<th>Acertos</th>
+							<th>Erros</th>
+						</tr>
+						<tbody>
+							{
+							this.state.historico.map((historico, i) => (
+								<tr>
+									<td>{historico.dado1}</td>
+									<td>{historico.dado2}</td>
+									<td>{historico.palpite}</td>
+									<td>{historico.resultado}</td>
+									<td>{historico.acertou}</td>
+									<td>{historico.errou}</td>
+								</tr>
+							))
+								}
+						</tbody>
+					</table>
+				</div>
+			</>
+		)
+	}
+}
+
+
+ReactDOM.render (
+ <App />,
+ document.getElementById("root")
+);
